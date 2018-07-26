@@ -5,12 +5,25 @@ contract SimpleWallet {
    event Deposit(address _sender, uint amount);
    event Withdrawl(address _sender, uint amount, address _beneficiary);
 
+
+   struct WithdrawlStruct {
+       address to;
+       uint amount;
+   }
+
+   struct Senders {
+       bool allowed;
+       uint amount_sends;
+       mapping(uint => WithdrawlStruct) withdrawls;
+   }
+
+
    function SimpleWallet() {
      owner = msg.sender;
    }
 
    function() {
-     if(msg.sender == owner || isAllowedToSendFundsMapping[msg.sender] == true) {
+     if(isAllowedToSend(msg.sender)) {
        Deposit(msg.sender, msg.value);
      }
      else {
@@ -20,7 +33,7 @@ contract SimpleWallet {
 
 
     function sendFunds(uint amount, address receiver) returns (uint) {
-      if(msg.sender == owner || isAllowedToSendFundsMapping[msg.sender] == true) {
+      if(isAllowedToSend(msg.sender)) {
         if(this.balance >= amount) {
           if(!receiver.send(amount)) {
             throw;
@@ -33,13 +46,13 @@ contract SimpleWallet {
 
     function allowAddressToSendMoney(address _address) {
       if(msg.sender == owner) {
-          isAllowedToSendFundsMapping[_address] = true;
+          isAllowedToSendFundsMapping[_address].allowed = true;
       }
     }
 
     function disAllowAddressToSendMoney(address _address) {
       if(msg.sender == owner) {
-          isAllowedToSendFundsMapping[_address] = false;
+          isAllowedToSendFundsMapping[_address].allowed = false;
       }
     }
 
