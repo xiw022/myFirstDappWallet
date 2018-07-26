@@ -10,6 +10,7 @@ app.controller("ShoweventsController", function($scope) {
 
     SimpleWallet.deployed().then(function(myContract) {
 
+
         var events = myContract.allEvents({fromBlock: 0, toBlock: 'latest'});
 
         events.watch(function(error, result) {
